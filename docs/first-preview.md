@@ -1,5 +1,41 @@
 # First things to try
 
+## Standalone work in progress: D05 #49
+
+[PR #180](https://github.com/carloshm91/kuberich/pull/180) merged as `a4e958c`
+on 2026-10-10 and closed #109. All four original required native environments,
+Repository checks and DCO passed; original artifact/aggregate and owned-cluster
+evidence was reviewed. The separate qualification finding under #40 remains open.
+
+D05 now prepares Linux/macOS x86_64/arm64 executables. The new runtime launcher
+re-executes the frozen application for its owned embedded PTY child and restores
+external tools' library environment without changing the main process or captured
+context. The focused source command was:
+
+```sh
+uv run --no-sync pytest -q tests/unit/test_runtime.py tests/unit/test_pty_boundary.py tests/unit/test_processes.py tests/contract/test_processes.py tests/contract/test_credentials.py tests/ui/test_embedded_terminal.py --cov=kuberich.runtime --cov-branch --cov-report=json:artifacts/standalone49/focused-runtime-coverage.json --cov-report=term-missing
+```
+
+It passed 219 cases on Linux/Python 3.12.12. Coverage of the new runtime module
+alone was 100% lines/branches; full production/changed-line qualification is still
+required. Ruff and strict mypy passed for the selected source/tool scope.
+
+An exploratory PyInstaller 6.22.3 build used a separate environment containing
+locked runtime/freezer dependencies and the actual built wheel. Its version/help
+and valid-preference `info` ran outside the checkout with an empty PATH. The first
+`info` fixture explicitly named a missing preference file and correctly exited 3;
+that original result is retained separately from the corrected valid fixture.
+This is local smoke evidence, not clean-host/minimum-OS or four-target qualification.
+The actual copied frozen executable also passed three original owned-API/PTY
+scenarios outside the checkout: repeated successful shell sessions, Unicode/
+cursor/alternate-screen protocol and resize, and deliberate closure. Terminal
+mode, cursor and reporting modes were restored; the fake external helper rejected
+leaked frozen loader state. That helper deliberately uses the test host's Python,
+so these cases establish the frozen application's launcher/UI behavior, not an
+interpreter-free host or a real cloud-provider trial.
+Standalone downloads and public installation remain unavailable. No maintainer
+trial or publication is requested at this checkpoint.
+
 ## Completed Q03 and resumed CI observation: Refs #50 / #109
 
 [PR #179](https://github.com/carloshm91/kuberich/pull/179) merged as `f5933bb`

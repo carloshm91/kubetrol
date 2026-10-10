@@ -1,5 +1,23 @@
 # Architecture decisions
 
+## Frozen runtime and external processes: Refs D05 #49
+
+The frozen entry dispatches its reserved PTY child before importing the CLI/UI.
+The ordinary source/wheel path retains the isolated stdlib launcher; a frozen
+application re-executes its own binary, then claims the child controlling terminal
+and replaces that child with the captured absolute executable and literal argv.
+It does not rely on an external Python interpreter for this launcher.
+
+The internal frozen child inherits its application's loader state until it has
+started. Only the subsequent external command receives a copied environment with
+the application's library paths removed and the original Linux library path
+restored where PyInstaller injected its bundle. Explicit external overrides and
+paths outside the bundle remain captured. External credential helpers, executable
+discovery and managed subprocesses use the same boundary; the application and
+session environments are never rewritten globally. Runtime decisions join the
+100% critical-module coverage policy. Actual frozen artifact and clean-target
+qualification belong to D05; source tests alone do not qualify a binary.
+
 ## Incremental log geometry and fixed-height status: Refs Q03 #50
 
 LogBody retains at most two published wrap geometries for the current width,
