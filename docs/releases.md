@@ -114,6 +114,16 @@ without the owner's explicit authorization. The maintainer has purchased
 10. Close #89 only after every promised public channel and site is verified.
     Record real links and start the next Unreleased section by PR.
 
+The [observed development matrix](acceptance/private-ci.md) verifies a complete
+matching-source PR/main pair with seven native jobs and four planner/aggregate
+jobs. That reduced development pattern does not qualify a release. Step 4 still
+requires all six supported combinations on the exact main candidate, with true
+completed/successful statuses and artifact evidence. Retained failures, including
+the warm-route heartbeat finding tracked in #40, need investigation before
+engineering readiness; a later passing run is not a source correction.
+Unavailable account billing does not authorize changing quotas, budgets,
+runner selection or publication settings.
+
 One serialized release workflow owns artifact publication. Do not depend on a
 tag created with `GITHUB_TOKEN` to trigger another workflow. Grant publishing
 and identity-token permissions only to the approved job. Fork PRs receive no

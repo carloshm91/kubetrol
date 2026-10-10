@@ -343,7 +343,7 @@ Only the approved production release job can propose a formula update. Cross-rep
 write access is limited to the tap; update branches are immutable and require
 review rather than automatic merging.
 
-Private CI policy #109 uses a standard-library event/ref planner outside the
+Development CI policy #109 uses a standard-library event/ref planner outside the
 runtime. Required PRs select all Linux minors and one macOS baseline; main pushes
 select Linux; manual main qualification selects all six supported combinations.
 The aggregate independently checks the planned matrix and both dependency results.

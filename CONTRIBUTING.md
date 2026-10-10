@@ -109,6 +109,15 @@ all six combinations before release. Every selected environment retains the full
 suite and independent coverage gates. Do not use a manual dispatch as a substitute
 for PR checks or a routine development matrix as release qualification.
 
+The [observed CI comparison](docs/acceptance/private-ci.md) verifies seven native
+jobs per matching-source PR/main pair plus four planner/aggregate jobs. These
+elapsed-time measurements include actual failures and separate unallocated or
+still-active work; they are not an account invoice. Preserve each failed original
+and diagnose its actual source/transport/measurement condition before proposing
+a correction. An unchanged rerun that happens to pass does not establish a fix.
+The historical local-only exception applies while its stated startup blocker
+exists; resumed hosted checks and protected aggregates remain required.
+
 ## Commits and releases
 
 Use Conventional Commit PR titles: feat, fix, perf, refactor, test, docs, build,
