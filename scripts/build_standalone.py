@@ -94,6 +94,28 @@ def analysis_binaries(path: Path) -> dict[str, str]:
     return result
 
 
+def system_package(source: Path) -> str:
+    """Use dpkg's original path identity on merged-/usr Linux hosts."""
+    resolved = source.resolve()
+    candidates = [source, resolved]
+    if resolved.is_relative_to(Path("/usr/lib")):
+        alias = Path("/lib") / resolved.relative_to("/usr/lib")
+        if alias.resolve() == resolved:
+            candidates.append(alias)
+    for candidate in dict.fromkeys(candidates):
+        owned = subprocess.run(
+            ["dpkg-query", "-S", str(candidate)], capture_output=True, text=True, timeout=10
+        )
+        if owned.returncode == 0:
+            lines = owned.stdout.splitlines()
+            if len(lines) != 1 or ": " not in lines[0]:
+                raise ValueError("Ambiguous original system-library package ownership")
+            return lines[0].split(": ", 1)[0]
+        if owned.returncode != 1:
+            owned.check_returncode()
+    raise ValueError("No original package owns the copied system library")
+
+
 def native_evidence(bundle: Path, analysis: Path, notices: Path, target: str) -> dict[str, Any]:
     sources = analysis_binaries(analysis)
     evidence: dict[str, Any] = {}
@@ -118,14 +140,7 @@ def native_evidence(bundle: Path, analysis: Path, notices: Path, target: str) ->
                 highest = max(highest, versions[-1])
             entry["glibc_symbol_versions"] = [list(value) for value in versions]
             if source and Path(source).resolve().is_relative_to(Path("/usr/lib")):
-                owned = subprocess.run(
-                    ["dpkg-query", "-S", str(Path(source).resolve())],
-                    capture_output=True,
-                    text=True,
-                    timeout=10,
-                    check=True,
-                )
-                package = owned.stdout.split(": ", 1)[0]
+                package = system_package(Path(source))
                 copyright = Path("/usr/share/doc") / package.split(":", 1)[0] / "copyright"
                 if not copyright.is_file():
                     raise ValueError("Missing original copied system-library copyright")

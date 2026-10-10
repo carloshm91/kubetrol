@@ -59,6 +59,11 @@ but its sanitized subprocess could not rediscover an interpreter installed in an
 owned nondefault directory. Original logs are retained; wheel construction and
 lock export now receive the already-selected interpreter explicitly, without
 re-enabling ambient Python settings or downloads.
+The next container built the native executable but package-notice collection
+failed because dpkg recorded `/lib` while the resolved file lived under `/usr/lib`.
+Notice discovery now checks the original source path and verified merged-/usr
+aliases, rejecting missing or ambiguous owners. The failed original remains
+retained; this does not waive notice or minimum-floor qualification.
 Standalone downloads and public installation remain unavailable. No maintainer
 trial or publication is requested at this checkpoint.
 

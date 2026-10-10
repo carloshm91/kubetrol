@@ -2,11 +2,17 @@
 
 import base64
 import hashlib
+import subprocess
 from pathlib import Path
 
 import pytest
 
-from scripts.build_standalone import analysis_binaries, retain_notices, source_inputs
+from scripts.build_standalone import (
+    analysis_binaries,
+    retain_notices,
+    source_inputs,
+    system_package,
+)
 from tests.support.distribution import ROOT
 
 
@@ -94,3 +100,40 @@ def test_recipe_provenance_binds_the_lgpl_replacement_instructions():
         "uv.lock",
     ):
         assert inputs[name] == hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+
+
+def test_original_package_path_is_preserved_before_resolving_symlink(tmp_path, monkeypatch):
+    original = tmp_path / "liboriginal.so"
+    original.write_bytes(b"original")
+    alias = tmp_path / "alias.so"
+    alias.symlink_to(original)
+    calls = []
+
+    def query(argv, **kwargs):
+        calls.append(argv)
+        return subprocess.CompletedProcess(argv, 0, "owned-package:amd64: " + str(alias) + "\n", "")
+
+    monkeypatch.setattr("scripts.build_standalone.subprocess.run", query)
+    assert system_package(alias) == "owned-package:amd64"
+    assert calls == [["dpkg-query", "-S", str(alias)]]
+
+
+@pytest.mark.parametrize(
+    "status,stdout,error",
+    [
+        (1, "", ValueError),
+        (2, "", subprocess.CalledProcessError),
+        (0, "first: /lib/file\nsecond: /lib/file\n", ValueError),
+    ],
+)
+def test_missing_failed_or_ambiguous_package_queries_cannot_pass(
+    tmp_path, monkeypatch, status, stdout, error
+):
+    source = tmp_path / "original.so"
+    source.write_bytes(b"library")
+    monkeypatch.setattr(
+        "scripts.build_standalone.subprocess.run",
+        lambda argv, **kwargs: subprocess.CompletedProcess(argv, status, stdout, ""),
+    )
+    with pytest.raises(error):
+        system_package(source)
