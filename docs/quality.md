@@ -382,11 +382,15 @@ before changing this contract. Local policy/site checks do not establish a new
 hosted/native result; [acceptance evidence](acceptance/ubuntu-runner-pin.md)
 records the pinned candidate's measured status.
 
-The [CI usage audit](acceptance/private-ci.md) distinguishes measured historical
-job time from projected work reductions, inaccessible account billing and the
-unavailable after-change hosted measurement. Resume the configured development
-checks when Actions can start, then record an actual before/after comparison in
-#109. Full supported-platform qualification remains mandatory in #40.
+The [CI usage audit](acceptance/private-ci.md) retains 227 original run/job
+observations, reproduces the historical private totals and measures the resumed
+development matrix. Its matching-source PR/main pair executed seven native jobs
+and four short planner/aggregate jobs. Completed elapsed time, active/unallocated
+nodes, failed runs and current storage are separate from inaccessible account
+billing. Current merges require the configured hosted checks. The older failed
+warm-route heartbeat remains a [D04 qualification finding](https://github.com/carloshm91/kuberich/issues/40#issuecomment-6101596974);
+a later pass does not establish its correction. Full supported-platform
+qualification remains mandatory in #40 and before publication under #89.
 
 Current enforced configuration was independently re-read on 2026-10-10 at
 02:09:56 UTC under #89. Main requires strict/up-to-date Quality gate and

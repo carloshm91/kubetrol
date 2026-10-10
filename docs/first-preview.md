@@ -1,5 +1,44 @@
 # First things to try
 
+## Completed Q03 and resumed CI observation: Refs #50 / #109
+
+[PR #179](https://github.com/carloshm91/kuberich/pull/179) merged as `f5933bb`
+on 2026-10-10 after all four required native checks and independent original
+artifact review. Q03 #50 is closed and its project card is Done. Linux Python
+3.12/3.13/3.14 each passed 4,437 cases; macOS passed 4,434 plus three explicit
+Linux-only skips. Measured coverage was at least 99.065732% lines and
+96.845600% branches across all 109 production modules, with all 43 critical
+modules at 100%. Changed executable production coverage was N/A (0/0).
+
+Each of the four lifecycle/protocol scenarios passed 36 measured cycles per
+native environment, with all 121 inputs matched to the frozen Git source,
+stable descriptor/thread counts, no pending tasks, reaped forwarding children,
+bounded history and actual 410/relist/current-row recovery. The exact focused
+command was `uv run pytest -q tests/contract/test_performance_lifecycle.py`;
+the complete native command was
+`uv run pytest --cov=kuberich --cov-branch --cov-report=term-missing --cov-report=xml --cov-report=json`.
+The original Linux 3.12 evidence also passed all 13 owned-cluster/installed-guide
+steps; independent review verified 12 cluster receipts and the exact-wheel
+quickstart with zero publications. Source, installed-runtime, audit, terminal
+and static-site checks passed. This is PR qualification, not the full
+six-environment release matrix.
+
+This checkpoint also records #109's resumed hosted-usage observation. Its
+read-only collection preserves 227 actual run/job records and failures, reproduces
+the earlier 128-run totals and verifies the seven-native-job PR/main pattern on
+identical source trees. See [the measured comparison](acceptance/private-ci.md).
+The older post-PR178 main run `38077802296` failed its positive aggregate-runtime
+child at 159.900812 ms during a warm resource route, above the unchanged
+150-ms heartbeat limit; the parent's refill assertion obscured that earlier
+failure. Original logs and artifact are retained, and the qualification finding
+is tracked in [D04 #40](https://github.com/carloshm91/kuberich/issues/40#issuecomment-6101596974).
+A later passing run does not establish a source correction. Q03's separately
+qualified 30-minute p95/memory and lifecycle scope remain recorded below.
+
+The first public target remains 0.1.0. Installation/upgrade, standalone outputs,
+shell history and final qualification/activation gates remain open. No maintainer
+trial, tag, package, tap, new site or DNS publication is requested here.
+
 ## Merged combined-load baseline: Refs Q03 #50
 
 [PR #178](https://github.com/carloshm91/kuberich/pull/178) merged as `e095b28`
