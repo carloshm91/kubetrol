@@ -178,13 +178,26 @@ def build(
     def command(argv: list[str]) -> None:
         run(argv, work, log)
 
-    command(["uv", "build", str(root), "--wheel", "--out-dir", str(work / "wheel")])
+    command(
+        [
+            "uv",
+            "build",
+            str(root),
+            "--python",
+            sys.executable,
+            "--wheel",
+            "--out-dir",
+            str(work / "wheel"),
+        ]
+    )
     command(
         [
             "uv",
             "export",
             "--project",
             str(root),
+            "--python",
+            sys.executable,
             "--locked",
             "--no-default-groups",
             "--group",
@@ -200,6 +213,8 @@ def build(
             "export",
             "--project",
             str(root),
+            "--python",
+            sys.executable,
             "--locked",
             "--no-default-groups",
             "--no-emit-project",

@@ -53,6 +53,12 @@ it is explicitly diagnostic and cannot be a qualified release input. Builds
 on the minimum supported Linux environment and the other native targets remain
 pending. The first recipe attempt failed while parsing uv's generated comment
 header; its original log is retained, and the export now excludes that header.
+The first minimum-floor container lacked the documented development gate
+dependencies and exited before the recipe started. The second reached the recipe
+but its sanitized subprocess could not rediscover an interpreter installed in an
+owned nondefault directory. Original logs are retained; wheel construction and
+lock export now receive the already-selected interpreter explicitly, without
+re-enabling ambient Python settings or downloads.
 Standalone downloads and public installation remain unavailable. No maintainer
 trial or publication is requested at this checkpoint.
 
