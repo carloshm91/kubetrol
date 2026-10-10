@@ -94,6 +94,37 @@ or kubeconfig requires them. The application must detect missing executables
 and give actionable instructions; basic API browsing must still work without
 kubectl. The Homebrew formula declares its Kubernetes CLI dependency.
 
+### Native build recipe under development: #49
+
+The optional `standalone` dependency group pins PyInstaller separately from the
+application's runtime. From a native build host:
+
+```sh
+uv sync --locked --group dev --group standalone
+uv run --no-sync python -m scripts.build_standalone --output artifacts/native-candidate
+```
+
+The output directory must be new. The recipe builds the actual wheel, installs
+the hashed locked runtime/freezer dependencies in an owned environment, collects
+styles and certificates, preserves original dependency/interpreter/library
+notices, and archives the whole onedir bundle with contained relative symlinks.
+Its manifest binds source inputs, wheel, native libraries, members and the archive
+by SHA-256. Build success alone leaves `runtime_qualified: false`; clean-host,
+owned-cluster and external-helper qualification is still required on each target.
+Do not advertise the archive as a release solely because the builder exited zero.
+
+An uncommitted developer build requires `--diagnostic` and is never a release
+input. The Linux recipe rejects native library symbol requirements above glibc
+2.35 outside diagnostic mode. It does not make a newer build compatible by merely
+writing a lower declared minimum. macOS build/signing and minimum-OS evidence
+remain under development; Developer ID signing/notarization is not claimed.
+
+Pyte's original LGPL source stays outside the embedded Python archive and ships
+with its license and replacement instructions. A local diagnostic trial exercised
+an actual compatible source replacement in a copied bundle. The entire directory,
+including `_internal` and notices, must be retained; the launcher alone is not a
+portable installation. No standalone artifact has been published.
+
 ## Homebrew implementation
 
 Prepare the dedicated kuberich/homebrew-tap scaffold in the distribution task.

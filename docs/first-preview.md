@@ -33,6 +33,26 @@ mode, cursor and reporting modes were restored; the fake external helper rejecte
 leaked frozen loader state. That helper deliberately uses the test host's Python,
 so these cases establish the frozen application's launcher/UI behavior, not an
 interpreter-free host or a real cloud-provider trial.
+
+The native archive recipe now retains original dependency/build-tool notices,
+CPython's license, copied system-library copyrights and the exact wheel,
+source-input, file and archive hashes. The focused archive/notice checks passed
+41 cases with:
+
+```sh
+uv run --no-sync pytest -q tests/quality/test_standalone_archive.py tests/quality/test_standalone_build.py
+```
+
+The actual diagnostic archive was validated and extracted outside the checkout.
+Its frozen UI/PTY passed three scenarios and a fourth run with a compatible
+modified Pyte source. The original Pyte source matched the installed wheel and
+was absent from the embedded PYZ, so replacement used the external library.
+These trials still use owned synthetic APIs and the host's Python helper.
+The developer-host archive requires GLIBC 2.38, above the declared 2.35 floor:
+it is explicitly diagnostic and cannot be a qualified release input. Builds
+on the minimum supported Linux environment and the other native targets remain
+pending. The first recipe attempt failed while parsing uv's generated comment
+header; its original log is retained, and the export now excludes that header.
 Standalone downloads and public installation remain unavailable. No maintainer
 trial or publication is requested at this checkpoint.
 
